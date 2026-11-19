@@ -25,7 +25,7 @@ on:
           - 'dotnet'
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '24'
   PYTHON_VERSION: '3.11'
   PHP_VERSION: '8.3'
   JAVA_VERSION: '21'
