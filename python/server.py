@@ -15,7 +15,7 @@ License: MIT
 
 import os
 import re
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from dotenv import load_dotenv
 from globalpayments.api import PorticoConfig, ServicesContainer
 from globalpayments.api.payment_methods import CreditCardData
@@ -23,7 +23,10 @@ from globalpayments.api.entities import Address
 from globalpayments.api.entities.exceptions import ApiException
 
 # Initialize application
-app = Flask(__name__, static_folder='.')
+app = Flask(__name__, static_folder=None)
+
+# Folder that holds index.html; only that page is served, never the server's own files
+FRONTEND_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def configure_sdk():
     """
@@ -62,7 +65,7 @@ def sanitize_postal_code(postal_code: str) -> str:
 @app.route('/')
 def index():
     """Serve the main payment form HTML page."""
-    return app.send_static_file('index.html')
+    return send_from_directory(FRONTEND_DIR, 'index.html')
 
 @app.route('/config')
 def get_config():
