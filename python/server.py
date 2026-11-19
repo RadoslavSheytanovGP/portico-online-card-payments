@@ -80,6 +80,17 @@ def get_config():
         }
     })
 
+def api_error(details):
+    """Build the 400 response used for rejected payment requests."""
+    return jsonify({
+        'success': False,
+        'message': 'Payment processing failed',
+        'error': {
+            'code': 'API_ERROR',
+            'details': details
+        }
+    }), 400
+
 @app.route('/process-payment', methods=['POST'])
 def process_payment():
     """
@@ -95,15 +106,15 @@ def process_payment():
     try:
         # Validate required fields
         if 'payment_token' not in request.form or 'billing_zip' not in request.form or 'amount' not in request.form:
-            raise ApiException('Missing required fields')
+            return api_error('Missing required fields')
         
         # Parse and validate amount
         try:
             amount = float(request.form['amount'])
-            if amount <= 0:
-                raise ValueError('Amount must be positive')
         except (ValueError, TypeError):
-            raise ApiException('Invalid amount')
+            return api_error('Invalid amount')
+        if amount <= 0:
+            return api_error('Invalid amount')
 
         # Create card data object with the token from client-side tokenization
         card = CreditCardData()
@@ -141,23 +152,17 @@ def process_payment():
             }
         })
     except ApiException as e:
-        # Handle API-specific exceptions and return error response
-        return jsonify({
-            'success': False,
-            'message': 'Payment processing failed',
-            'error': {
-                'code': 'API_ERROR',
-                'details': str(e)
-            }
-        }), 400
-    except Exception as e:
-        # Handle general errors
+        # Return the gateway's own message so the reason for the rejection is visible
+        return api_error(str(e))
+    except Exception:
+        # Log unexpected errors on the server and return a generic message
+        app.logger.exception('Unexpected error while processing payment')
         return jsonify({
             'success': False,
             'message': 'Internal server error',
             'error': {
                 'code': 'SERVER_ERROR',
-                'details': str(e)
+                'details': 'An unexpected error occurred'
             }
         }), 500
 
