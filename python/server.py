@@ -22,6 +22,9 @@ from globalpayments.api.payment_methods import CreditCardData
 from globalpayments.api.entities import Address
 from globalpayments.api.entities.exceptions import ApiException
 
+# Load environment variables from the .env file
+load_dotenv()
+
 # Initialize application
 app = Flask(__name__, static_folder=None)
 
