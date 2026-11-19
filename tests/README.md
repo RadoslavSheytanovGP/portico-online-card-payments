@@ -100,7 +100,7 @@ GitHub Actions workflow is configured to:
 
 - Node.js 18 or higher
 - Each implementation's prerequisites:
-  - .NET: .NET 9.0 SDK
+  - .NET: .NET 10.0 SDK
   - Go: Go 1.23+
   - Java: JDK 21+
   - Python: Python 3.11+

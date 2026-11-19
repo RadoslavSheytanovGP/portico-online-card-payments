@@ -30,7 +30,7 @@ env:
   PHP_VERSION: '8.3'
   JAVA_VERSION: '21'
   GO_VERSION: '1.23'
-  DOTNET_VERSION: '9.0.x'
+  DOTNET_VERSION: '10.0.x'
 
 jobs:
   test:
